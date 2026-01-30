@@ -13,6 +13,10 @@ WORKDIR /app
 # Clonar OpenClaw
 RUN git clone --depth 1 https://github.com/openclaw/openclaw.git .
 
+# PATCH: Permitir cualquier proxy (Railway usa IPs dinámicas)
+# Forzamos isTrustedProxyAddress a true para evitar rechazos por IP de proxy desconocida
+RUN sed -i 's/export function isTrustedProxyAddress.*/export function isTrustedProxyAddress(ip: string | undefined, trustedProxies?: string[]): boolean { return true; }/g' src/gateway/net.ts
+
 # Instalar pnpm y dependencias
 RUN corepack enable
 RUN pnpm install --frozen-lockfile
