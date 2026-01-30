@@ -33,4 +33,5 @@ ENV HOME=/home/node
 EXPOSE 18789
 
 # Comando de inicio - Railway inyecta $PORT
-CMD ["sh", "-c", "node dist/index.js gateway --bind lan --port ${PORT:-18789}"]
+# --allow-unconfigured permite iniciar sin configuración previa
+CMD ["sh", "-c", "node dist/index.js gateway --bind lan --port ${PORT:-18789} --allow-unconfigured"]
