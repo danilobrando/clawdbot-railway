@@ -13,9 +13,9 @@ WORKDIR /app
 # Clonar OpenClaw
 RUN git clone --depth 1 https://github.com/openclaw/openclaw.git .
 
-# PATCH: Permitir cualquier proxy (Railway usa IPs dinámicas)
-# Forzamos isTrustedProxyAddress a true para evitar rechazos por IP de proxy desconocida
-RUN sed -i 's/export function isTrustedProxyAddress.*/export function isTrustedProxyAddress(ip: string | undefined, trustedProxies?: string[]): boolean { return true; }/g' src/gateway/net.ts
+# Copiar y ejecutar el parche para proxies
+COPY patch.js .
+RUN node patch.js
 
 # Instalar pnpm y dependencias
 RUN corepack enable
@@ -37,6 +37,4 @@ ENV HOME=/home/node
 EXPOSE 18789
 
 # Comando de inicio
-# Usamos --bind 0.0.0.0 para asegurar que escuche en todas las interfaces dentro del contenedor
-# --allow-unconfigured permite el inicio sin wizard previo
 CMD ["sh", "-c", "node dist/index.js gateway --bind 0.0.0.0 --port ${PORT:-18789} --allow-unconfigured"]
