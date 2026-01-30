@@ -1,6 +1,6 @@
 FROM node:22-bookworm
 
-# Instalar dependencias del sistema
+# Instalar dependencias del sistema mínimas requeridas
 RUN apt-get update && apt-get install -y \
     socat \
     curl \
@@ -32,6 +32,7 @@ ENV HOME=/home/node
 # Puerto del Gateway (Railway asigna PORT dinámicamente)
 EXPOSE 18789
 
-# Comando de inicio - Railway inyecta $PORT
-# --allow-unconfigured permite iniciar sin configuración previa
-CMD ["sh", "-c", "node dist/index.js gateway --bind lan --port ${PORT:-18789} --allow-unconfigured"]
+# Comando de inicio
+# Usamos --bind 0.0.0.0 para asegurar que escuche en todas las interfaces dentro del contenedor
+# --allow-unconfigured permite el inicio sin wizard previo
+CMD ["sh", "-c", "node dist/index.js gateway --bind 0.0.0.0 --port ${PORT:-18789} --allow-unconfigured"]
